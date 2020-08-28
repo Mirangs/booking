@@ -47,6 +47,11 @@ export type TimeSlot = {
   to: Scalars['Date'];
 };
 
+export type TimeSlotInput = {
+  from: Scalars['Date'];
+  to: Scalars['Date'];
+};
+
 export type Apartment = {
   __typename?: 'Apartment';
   id: Scalars['ID'];
@@ -131,6 +136,50 @@ export type UserResponse = {
   data?: Maybe<User>;
 };
 
+export type Order = {
+  __typename?: 'Order';
+  id: Scalars['ID'];
+  voucher: Voucher;
+  variant: VoucherType;
+  quantity: Scalars['Int'];
+  buyer: User;
+};
+
+export type OrderInput = {
+  voucher_id: Scalars['ID'];
+  variant_id: Scalars['ID'];
+  quantity: Scalars['Int'];
+  buyer_id: Scalars['ID'];
+};
+
+export type OrderResponse = {
+  __typename?: 'OrderResponse';
+  error?: Maybe<Error>;
+  data?: Maybe<Order>;
+};
+
+export type Booking = {
+  __typename?: 'Booking';
+  id: Scalars['ID'];
+  apartment: Apartment;
+  time_slots: Array<Maybe<TimeSlot>>;
+  number_of_rooms: Scalars['Int'];
+  buyer: User;
+};
+
+export type BookingInput = {
+  apartment_id: Scalars['ID'];
+  time_slots: Array<Maybe<TimeSlotInput>>;
+  number_of_rooms: Scalars['Int'];
+  buyer_id: Scalars['ID'];
+};
+
+export type BookingResponse = {
+  __typename?: 'BookingResponse';
+  error?: Maybe<Error>;
+  data?: Maybe<Booking>;
+};
+
 export type Query = {
   __typename?: 'Query';
   roles?: Maybe<Array<Maybe<Role>>>;
@@ -141,6 +190,10 @@ export type Query = {
   apartment?: Maybe<Apartment>;
   vouchers?: Maybe<Array<Maybe<Voucher>>>;
   voucher?: Maybe<Voucher>;
+  orders?: Maybe<Array<Maybe<Order>>>;
+  order?: Maybe<Order>;
+  bookings?: Maybe<Array<Maybe<Booking>>>;
+  booking?: Maybe<Booking>;
 };
 
 
@@ -158,6 +211,16 @@ export type QueryVoucherArgs = {
   id: Scalars['ID'];
 };
 
+
+export type QueryOrderArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryBookingArgs = {
+  id: Scalars['ID'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   signUp: UserResponse;
@@ -168,21 +231,27 @@ export type Mutation = {
   createVoucher: VoucherResponse;
   updateVoucher: VoucherResponse;
   deleteVoucher: VoucherResponse;
+  createBooking: BookingResponse;
+  updateBooking: BookingResponse;
+  deleteBooking: BookingResponse;
+  createOrder: OrderResponse;
+  updateOrder: OrderResponse;
+  deleteOrder: OrderResponse;
 };
 
 
 export type MutationSignUpArgs = {
-  data?: Maybe<SignUpInput>;
+  data: SignUpInput;
 };
 
 
 export type MutationLoginArgs = {
-  data?: Maybe<LoginInput>;
+  data: LoginInput;
 };
 
 
 export type MutationCreateApartmentArgs = {
-  data?: Maybe<ApartmentInput>;
+  data: ApartmentInput;
 };
 
 
@@ -198,17 +267,49 @@ export type MutationDeleteAparmentArgs = {
 
 
 export type MutationCreateVoucherArgs = {
-  data?: Maybe<VoucherInput>;
+  data: VoucherInput;
 };
 
 
 export type MutationUpdateVoucherArgs = {
   id: Scalars['ID'];
-  data?: Maybe<VoucherInput>;
+  data: VoucherInput;
 };
 
 
 export type MutationDeleteVoucherArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationCreateBookingArgs = {
+  data: BookingInput;
+};
+
+
+export type MutationUpdateBookingArgs = {
+  id: Scalars['ID'];
+  data?: Maybe<BookingInput>;
+};
+
+
+export type MutationDeleteBookingArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationCreateOrderArgs = {
+  data: OrderInput;
+};
+
+
+export type MutationUpdateOrderArgs = {
+  id: Scalars['ID'];
+  data: OrderInput;
+};
+
+
+export type MutationDeleteOrderArgs = {
   id: Scalars['ID'];
 };
 
@@ -307,6 +408,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   User: ResolverTypeWrapper<User>;
   TimeSlot: ResolverTypeWrapper<TimeSlot>;
+  TimeSlotInput: TimeSlotInput;
   Apartment: ResolverTypeWrapper<Apartment>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -320,6 +422,12 @@ export type ResolversTypes = {
   ApartmentResponse: ResolverTypeWrapper<ApartmentResponse>;
   VoucherResponse: ResolverTypeWrapper<VoucherResponse>;
   UserResponse: ResolverTypeWrapper<UserResponse>;
+  Order: ResolverTypeWrapper<Order>;
+  OrderInput: OrderInput;
+  OrderResponse: ResolverTypeWrapper<OrderResponse>;
+  Booking: ResolverTypeWrapper<Booking>;
+  BookingInput: BookingInput;
+  BookingResponse: ResolverTypeWrapper<BookingResponse>;
   Query: ResolverTypeWrapper<{}>;
   Mutation: ResolverTypeWrapper<{}>;
   CacheControlScope: CacheControlScope;
@@ -336,6 +444,7 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   User: User;
   TimeSlot: TimeSlot;
+  TimeSlotInput: TimeSlotInput;
   Apartment: Apartment;
   Float: Scalars['Float'];
   Int: Scalars['Int'];
@@ -349,6 +458,12 @@ export type ResolversParentTypes = {
   ApartmentResponse: ApartmentResponse;
   VoucherResponse: VoucherResponse;
   UserResponse: UserResponse;
+  Order: Order;
+  OrderInput: OrderInput;
+  OrderResponse: OrderResponse;
+  Booking: Booking;
+  BookingInput: BookingInput;
+  BookingResponse: BookingResponse;
   Query: {};
   Mutation: {};
   Upload: Scalars['Upload'];
@@ -472,6 +587,36 @@ export type UserResponseResolvers<ContextType = any, ParentType extends Resolver
   __isTypeOf?: IsTypeOfResolverFn<ParentType>;
 };
 
+export type OrderResolvers<ContextType = any, ParentType extends ResolversParentTypes['Order'] = ResolversParentTypes['Order']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  voucher?: Resolver<ResolversTypes['Voucher'], ParentType, ContextType>;
+  variant?: Resolver<ResolversTypes['VoucherType'], ParentType, ContextType>;
+  quantity?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  buyer?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+};
+
+export type OrderResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['OrderResponse'] = ResolversParentTypes['OrderResponse']> = {
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  data?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+};
+
+export type BookingResolvers<ContextType = any, ParentType extends ResolversParentTypes['Booking'] = ResolversParentTypes['Booking']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  apartment?: Resolver<ResolversTypes['Apartment'], ParentType, ContextType>;
+  time_slots?: Resolver<Array<Maybe<ResolversTypes['TimeSlot']>>, ParentType, ContextType>;
+  number_of_rooms?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  buyer?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+};
+
+export type BookingResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['BookingResponse'] = ResolversParentTypes['BookingResponse']> = {
+  error?: Resolver<Maybe<ResolversTypes['Error']>, ParentType, ContextType>;
+  data?: Resolver<Maybe<ResolversTypes['Booking']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>;
+};
+
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   roles?: Resolver<Maybe<Array<Maybe<ResolversTypes['Role']>>>, ParentType, ContextType>;
   users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
@@ -481,17 +626,27 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   apartment?: Resolver<Maybe<ResolversTypes['Apartment']>, ParentType, ContextType, RequireFields<QueryApartmentArgs, 'id'>>;
   vouchers?: Resolver<Maybe<Array<Maybe<ResolversTypes['Voucher']>>>, ParentType, ContextType>;
   voucher?: Resolver<Maybe<ResolversTypes['Voucher']>, ParentType, ContextType, RequireFields<QueryVoucherArgs, 'id'>>;
+  orders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Order']>>>, ParentType, ContextType>;
+  order?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<QueryOrderArgs, 'id'>>;
+  bookings?: Resolver<Maybe<Array<Maybe<ResolversTypes['Booking']>>>, ParentType, ContextType>;
+  booking?: Resolver<Maybe<ResolversTypes['Booking']>, ParentType, ContextType, RequireFields<QueryBookingArgs, 'id'>>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  signUp?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationSignUpArgs, never>>;
-  login?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, never>>;
-  createApartment?: Resolver<ResolversTypes['ApartmentResponse'], ParentType, ContextType, RequireFields<MutationCreateApartmentArgs, never>>;
+  signUp?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'data'>>;
+  login?: Resolver<ResolversTypes['UserResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'data'>>;
+  createApartment?: Resolver<ResolversTypes['ApartmentResponse'], ParentType, ContextType, RequireFields<MutationCreateApartmentArgs, 'data'>>;
   updateApartment?: Resolver<ResolversTypes['ApartmentResponse'], ParentType, ContextType, RequireFields<MutationUpdateApartmentArgs, 'id'>>;
   deleteAparment?: Resolver<ResolversTypes['ApartmentResponse'], ParentType, ContextType, RequireFields<MutationDeleteAparmentArgs, 'id'>>;
-  createVoucher?: Resolver<ResolversTypes['VoucherResponse'], ParentType, ContextType, RequireFields<MutationCreateVoucherArgs, never>>;
-  updateVoucher?: Resolver<ResolversTypes['VoucherResponse'], ParentType, ContextType, RequireFields<MutationUpdateVoucherArgs, 'id'>>;
+  createVoucher?: Resolver<ResolversTypes['VoucherResponse'], ParentType, ContextType, RequireFields<MutationCreateVoucherArgs, 'data'>>;
+  updateVoucher?: Resolver<ResolversTypes['VoucherResponse'], ParentType, ContextType, RequireFields<MutationUpdateVoucherArgs, 'id' | 'data'>>;
   deleteVoucher?: Resolver<ResolversTypes['VoucherResponse'], ParentType, ContextType, RequireFields<MutationDeleteVoucherArgs, 'id'>>;
+  createBooking?: Resolver<ResolversTypes['BookingResponse'], ParentType, ContextType, RequireFields<MutationCreateBookingArgs, 'data'>>;
+  updateBooking?: Resolver<ResolversTypes['BookingResponse'], ParentType, ContextType, RequireFields<MutationUpdateBookingArgs, 'id'>>;
+  deleteBooking?: Resolver<ResolversTypes['BookingResponse'], ParentType, ContextType, RequireFields<MutationDeleteBookingArgs, 'id'>>;
+  createOrder?: Resolver<ResolversTypes['OrderResponse'], ParentType, ContextType, RequireFields<MutationCreateOrderArgs, 'data'>>;
+  updateOrder?: Resolver<ResolversTypes['OrderResponse'], ParentType, ContextType, RequireFields<MutationUpdateOrderArgs, 'id' | 'data'>>;
+  deleteOrder?: Resolver<ResolversTypes['OrderResponse'], ParentType, ContextType, RequireFields<MutationDeleteOrderArgs, 'id'>>;
 };
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
@@ -510,6 +665,10 @@ export type Resolvers<ContextType = any> = {
   ApartmentResponse?: ApartmentResponseResolvers<ContextType>;
   VoucherResponse?: VoucherResponseResolvers<ContextType>;
   UserResponse?: UserResponseResolvers<ContextType>;
+  Order?: OrderResolvers<ContextType>;
+  OrderResponse?: OrderResponseResolvers<ContextType>;
+  Booking?: BookingResolvers<ContextType>;
+  BookingResponse?: BookingResponseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Upload?: GraphQLScalarType;

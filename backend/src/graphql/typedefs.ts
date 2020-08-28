@@ -1,3 +1,4 @@
+import { BookingInput } from './../generated/graphql';
 import { gql } from 'apollo-server-express';
 
 export default gql`
@@ -20,6 +21,11 @@ export default gql`
 
   type TimeSlot {
     id: ID!
+    from: Date!
+    to: Date!
+  }
+
+  input TimeSlotInput {
     from: Date!
     to: Date!
   }
@@ -101,6 +107,46 @@ export default gql`
     data: User
   }
 
+  type Order {
+    id: ID!
+    voucher: Voucher!
+    variant: VoucherType!
+    quantity: Int!
+    buyer: User!
+  }
+
+  input OrderInput {
+    voucher_id: ID!
+    variant_id: ID!
+    quantity: Int!
+    buyer_id: ID!
+  }
+
+  type OrderResponse {
+    error: Error
+    data: Order
+  }
+
+  type Booking {
+    id: ID!
+    apartment: Apartment!
+    time_slots: [TimeSlot]!
+    number_of_rooms: Int!
+    buyer: User!
+  }
+
+  input BookingInput {
+    apartment_id: ID!
+    time_slots: [TimeSlotInput]!
+    number_of_rooms: Int!
+    buyer_id: ID!
+  }
+
+  type BookingResponse {
+    error: Error
+    data: Booking
+  }
+
   type Query {
     roles: [Role]
     users: [User]
@@ -110,16 +156,26 @@ export default gql`
     apartment(id: ID!): Apartment
     vouchers: [Voucher]
     voucher(id: ID!): Voucher
+    orders: [Order]
+    order(id: ID!): Order
+    bookings: [Booking]
+    booking(id: ID!): Booking
   }
 
   type Mutation {
-    signUp(data: SignUpInput): UserResponse!
-    login(data: LoginInput): UserResponse!
-    createApartment(data: ApartmentInput): ApartmentResponse!
+    signUp(data: SignUpInput!): UserResponse!
+    login(data: LoginInput!): UserResponse!
+    createApartment(data: ApartmentInput!): ApartmentResponse!
     updateApartment(id: ID!, data: ApartmentInput): ApartmentResponse!
     deleteAparment(id: ID!): ApartmentResponse!
-    createVoucher(data: VoucherInput): VoucherResponse!
-    updateVoucher(id: ID!, data: VoucherInput): VoucherResponse!
+    createVoucher(data: VoucherInput!): VoucherResponse!
+    updateVoucher(id: ID!, data: VoucherInput!): VoucherResponse!
     deleteVoucher(id: ID!): VoucherResponse!
+    createBooking(data: BookingInput!): BookingResponse!
+    updateBooking(id: ID!, data: BookingInput): BookingResponse!
+    deleteBooking(id: ID!): BookingResponse!
+    createOrder(data: OrderInput!): OrderResponse!
+    updateOrder(id: ID!, data: OrderInput!): OrderResponse!
+    deleteOrder(id: ID!): OrderResponse!
   }
 `;
