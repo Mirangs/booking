@@ -30,8 +30,7 @@ import { SchemaError } from 'apollo-server-express';
 
 export default {
   Query: {
-    roles: async () =>
-      await RoleModel.find({ name: {$ne: "Admin"} }))
+    roles: async () => await RoleModel.find({ name: { $ne: 'Admin' } }),
     users: async () => await UserModel.find(),
     user: async (_: void, { email }: { email: string }) =>
       await UserModel.findOne({ email }),
