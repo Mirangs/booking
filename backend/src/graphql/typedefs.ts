@@ -1,4 +1,4 @@
-import { BookingInput } from './../generated/graphql';
+import { BookingInput, Apartment } from './../generated/graphql';
 import { gql } from 'apollo-server-express';
 
 export default gql`
@@ -81,6 +81,7 @@ export default gql`
     password: String!
     first_name: String!
     last_name: String!
+    role_id: String!
   }
 
   input LoginInput {
@@ -154,12 +155,15 @@ export default gql`
     voucherTypes: [VoucherType]
     apartments: [Apartment]
     apartment(id: ID!): Apartment
+    apartmentsByOwner(owner_id: ID!): [Apartment]
     vouchers: [Voucher]
     voucher(id: ID!): Voucher
+    vouchersByOwner(owner_id: ID!): [Voucher]
     orders: [Order]
     order(id: ID!): Order
     bookings: [Booking]
     booking(id: ID!): Booking
+    restoreByToken(token: String!): User
   }
 
   type Mutation {

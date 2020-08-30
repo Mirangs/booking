@@ -106,6 +106,7 @@ export type SignUpInput = {
   password: Scalars['String'];
   first_name: Scalars['String'];
   last_name: Scalars['String'];
+  role_id: Scalars['String'];
 };
 
 export type LoginInput = {
@@ -188,12 +189,15 @@ export type Query = {
   voucherTypes?: Maybe<Array<Maybe<VoucherType>>>;
   apartments?: Maybe<Array<Maybe<Apartment>>>;
   apartment?: Maybe<Apartment>;
+  apartmentsByOwner?: Maybe<Array<Maybe<Apartment>>>;
   vouchers?: Maybe<Array<Maybe<Voucher>>>;
   voucher?: Maybe<Voucher>;
+  vouchersByOwner?: Maybe<Array<Maybe<Voucher>>>;
   orders?: Maybe<Array<Maybe<Order>>>;
   order?: Maybe<Order>;
   bookings?: Maybe<Array<Maybe<Booking>>>;
   booking?: Maybe<Booking>;
+  restoreByToken?: Maybe<User>;
 };
 
 
@@ -207,8 +211,18 @@ export type QueryApartmentArgs = {
 };
 
 
+export type QueryApartmentsByOwnerArgs = {
+  owner_id: Scalars['ID'];
+};
+
+
 export type QueryVoucherArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryVouchersByOwnerArgs = {
+  owner_id: Scalars['ID'];
 };
 
 
@@ -219,6 +233,11 @@ export type QueryOrderArgs = {
 
 export type QueryBookingArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryRestoreByTokenArgs = {
+  token: Scalars['String'];
 };
 
 export type Mutation = {
@@ -624,12 +643,15 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   voucherTypes?: Resolver<Maybe<Array<Maybe<ResolversTypes['VoucherType']>>>, ParentType, ContextType>;
   apartments?: Resolver<Maybe<Array<Maybe<ResolversTypes['Apartment']>>>, ParentType, ContextType>;
   apartment?: Resolver<Maybe<ResolversTypes['Apartment']>, ParentType, ContextType, RequireFields<QueryApartmentArgs, 'id'>>;
+  apartmentsByOwner?: Resolver<Maybe<Array<Maybe<ResolversTypes['Apartment']>>>, ParentType, ContextType, RequireFields<QueryApartmentsByOwnerArgs, 'owner_id'>>;
   vouchers?: Resolver<Maybe<Array<Maybe<ResolversTypes['Voucher']>>>, ParentType, ContextType>;
   voucher?: Resolver<Maybe<ResolversTypes['Voucher']>, ParentType, ContextType, RequireFields<QueryVoucherArgs, 'id'>>;
+  vouchersByOwner?: Resolver<Maybe<Array<Maybe<ResolversTypes['Voucher']>>>, ParentType, ContextType, RequireFields<QueryVouchersByOwnerArgs, 'owner_id'>>;
   orders?: Resolver<Maybe<Array<Maybe<ResolversTypes['Order']>>>, ParentType, ContextType>;
   order?: Resolver<Maybe<ResolversTypes['Order']>, ParentType, ContextType, RequireFields<QueryOrderArgs, 'id'>>;
   bookings?: Resolver<Maybe<Array<Maybe<ResolversTypes['Booking']>>>, ParentType, ContextType>;
   booking?: Resolver<Maybe<ResolversTypes['Booking']>, ParentType, ContextType, RequireFields<QueryBookingArgs, 'id'>>;
+  restoreByToken?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryRestoreByTokenArgs, 'token'>>;
 };
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {

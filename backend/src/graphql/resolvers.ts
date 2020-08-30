@@ -38,26 +38,42 @@ export default {
     apartments: async () => await ApartmentModel.find(),
     apartment: async (_: void, { id }: { id: string }) =>
       await ApartmentModel.findById(id),
+    apartmentsByOwner: async (_: void, { owner_id }: { owner_id: string }) =>
+      await ApartmentModel.find({ owner_id }),
     vouchers: async () => await VoucherModel.find(),
     voucher: async (_: void, { id }: { id: string }) =>
       await VoucherModel.findById(id),
+    vouchersByOwner: async (_: void, { owner_id }: { owner_id: string }) =>
+      await VoucherModel.find({ owner_id }),
     bookings: async () => await BookingModel.find(),
     booking: async (_: void, { id }: { id: string }) =>
       await BookingModel.findById(id),
     orders: async () => await OrderModel.find(),
     order: async (_: void, { id }: { id: string }) =>
       await OrderModel.findById(id),
+    restoreByToken: async (_: void, { token }: { token: string }) =>
+      await UserModel.findOne({ token }),
   },
   Mutation: {
     signUp: async (
       _: void,
       { data }: { data: SignUpInput }
     ): Promise<UserResponse> => {
+      const { email, first_name, last_name, role_id, password } = data;
+
+      if (!email || !first_name || !last_name || !role_id || !password) {
+        return {
+          error: {
+            message: 'Fill all required fields',
+          },
+        };
+      }
+
       try {
-        const sellerRole = await RoleModel.findOne({ name: 'Seller' });
-        if (!sellerRole) {
+        const role = await RoleModel.findById(role_id);
+        if (!role) {
           return {
-            error: { message: 'Cannot find seller role' },
+            error: { message: 'Cannot find role' },
           };
         }
 
@@ -71,7 +87,7 @@ export default {
         try {
           const createdUser = await UserModel.create({
             ...data,
-            role_id: sellerRole._id,
+            role_id,
           });
           return {
             data: createdUser as any,
@@ -106,9 +122,9 @@ export default {
         };
       }
 
-      const token = await user.generateAuthToken();
+      await user.generateAuthToken();
       return {
-        data: { ...user, token } as any,
+        data: user as any,
       };
     },
     createApartment: async (
@@ -384,7 +400,7 @@ export default {
       }
 
       try {
-        const booking = await BookingModel.create(data);
+        const booking = await BookingModel.create(data as any);
         return { data: booking as any };
       } catch (err) {
         console.error(`Error at createBooking resolver: ${err}`);
@@ -430,7 +446,7 @@ export default {
       }
 
       try {
-        const booking = await BookingModel.updateOne({ _id: id }, data);
+        const booking = await BookingModel.updateOne({ _id: id }, data as any);
         return { data: (await BookingModel.findById(id)) as any };
       } catch (err) {
         console.error(`Error at updateBooking resolver: ${err}`);
